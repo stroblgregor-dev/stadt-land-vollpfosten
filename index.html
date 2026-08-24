@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Stadt Land Vollpfosten</title>
+
+<!-- iOS Home-Screen / PWA -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SLV">
+<meta name="theme-color" content="#2b1055">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="app-header">
+  <h1>Stadt Land Vollpfosten</h1>
+  <nav class="tabs">
+    <button id="tabGameBtn" class="tab-btn active" data-view="game">Spiel</button>
+    <button id="tabSettingsBtn" class="tab-btn" data-view="settings">Kategorien</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- GAME VIEW -->
+  <section id="gameView" class="view active">
+
+    <div id="idleState" class="state-block">
+      <p class="hint">Zwei Spieler, ein Gerät. Die App liest die Kategorien laut vor &ndash; in zuf&auml;lliger Reihenfolge, ohne sie anzuzeigen.</p>
+      <p class="category-count"><span id="categoryCount">0</span> Kategorien bereit</p>
+      <button id="startBtn" class="primary-btn">Spiel starten</button>
+    </div>
+
+    <div id="playState" class="state-block hidden">
+      <p class="progress-label">Runde <span id="roundNumber">1</span> von <span id="roundTotal">0</span></p>
+
+      <div class="round-dots" id="roundDots"></div>
+
+      <div class="speak-indicator" id="speakIndicator">
+        <span class="speak-icon">🔊</span>
+        <span id="speakStatus">Kategorie wird vorgelesen &hellip;</span>
+      </div>
+
+      <div class="play-controls">
+        <button id="repeatBtn" class="secondary-btn" title="Kategorie erneut vorlesen">🔁 Wiederholen</button>
+        <button id="nextBtn" class="primary-btn">Weiter</button>
+      </div>
+
+      <button id="stopBtn" class="text-btn">Spiel beenden</button>
+    </div>
+
+    <div id="finishedState" class="state-block hidden">
+      <p class="finished-emoji">🎉</p>
+      <p class="finished-text">Alle Kategorien wurden vorgelesen!</p>
+      <button id="restartBtn" class="primary-btn">Neues Spiel</button>
+    </div>
+
+  </section>
+
+  <!-- SETTINGS VIEW -->
+  <section id="settingsView" class="view">
+
+    <form id="addForm" class="add-form">
+      <input id="newCategoryInput" type="text" placeholder="Neue Kategorie, z.B. Superheld" maxlength="60" autocomplete="off">
+      <button type="submit" class="primary-btn small">Hinzuf&uuml;gen</button>
+    </form>
+
+    <p id="settingsEmptyHint" class="hint hidden">Noch keine Kategorien vorhanden. F&uuml;ge oben eine hinzu.</p>
+
+    <ul id="categoryList" class="category-list"></ul>
+  </section>
+
+</main>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
