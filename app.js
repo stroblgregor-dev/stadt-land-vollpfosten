@@ -260,18 +260,36 @@
     announceCurrent();
   }
 
+  const READY_PAUSE_MS = 900;
+  let speechToken = 0;
+
+  function delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async function announceWithPrompt(text) {
+    const token = ++speechToken;
+    speakStatus.textContent = "Bereit?";
+    await speak("Bereit?");
+    if (token !== speechToken) return;
+    await delay(READY_PAUSE_MS);
+    if (token !== speechToken) return;
+    speakStatus.textContent = "Kategorie wird vorgelesen …";
+    await speak(text);
+    if (token !== speechToken) return;
+    speakStatus.textContent = "Bereit – wenn beide fertig sind: Weiter";
+  }
+
   function announceCurrent() {
     roundNumberEl.textContent = String(roundIndex + 1);
     renderDots();
-    speakStatus.textContent = "Kategorie wird vorgelesen …";
-    speak(roundOrder[roundIndex]).then(() => {
-      speakStatus.textContent = "Bereit – wenn beide fertig sind: Weiter";
-    });
+    announceWithPrompt(roundOrder[roundIndex]);
   }
 
   function nextRound() {
     roundIndex++;
     if (roundIndex >= roundOrder.length) {
+      speechToken++;
       window.speechSynthesis && window.speechSynthesis.cancel();
       setState("finished");
       return;
@@ -280,13 +298,11 @@
   }
 
   function repeatCurrent() {
-    speakStatus.textContent = "Kategorie wird vorgelesen …";
-    speak(roundOrder[roundIndex]).then(() => {
-      speakStatus.textContent = "Bereit – wenn beide fertig sind: Weiter";
-    });
+    announceWithPrompt(roundOrder[roundIndex]);
   }
 
   function stopRound({ silent } = {}) {
+    speechToken++;
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
     setState("idle");
     if (!silent) showToast("Spiel beendet");
