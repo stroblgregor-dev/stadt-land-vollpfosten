@@ -154,6 +154,45 @@ main {
   padding: 8px;
 }
 
+.secondary-btn.small {
+  padding: 10px 14px;
+  font-size: 0.9rem;
+}
+
+.voice-block {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.voice-label {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.voice-row {
+  display: flex;
+  gap: 8px;
+}
+
+#voiceSelect {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  background: rgba(255,255,255,0.08);
+  color: var(--text);
+  font-size: 0.95rem;
+  min-width: 0;
+}
+
+#voiceSelect option { color: #23103f; }
+
 .progress-label {
   font-size: 1rem;
   color: var(--text-dim);

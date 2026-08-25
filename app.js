@@ -2,6 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "slv.categories.v1";
+  const VOICE_STORAGE_KEY = "slv.voice.v1";
 
   const DEFAULT_CATEGORIES = [
     "Stadt", "Land", "Fluss", "Vorname", "Tier", "Beruf", "Pflanze", "Farbe",
@@ -132,12 +133,72 @@
 
   /* ---------- speech ---------- */
 
+  const voiceSelect = document.getElementById("voiceSelect");
+  const voiceTestBtn = document.getElementById("voiceTestBtn");
+
+  let selectedVoiceKey = localStorage.getItem(VOICE_STORAGE_KEY) || "";
+
+  function voiceKey(voice) {
+    return `${voice.name}|${voice.lang}`;
+  }
+
+  function populateVoices() {
+    if (!("speechSynthesis" in window)) return;
+    const voices = window.speechSynthesis.getVoices();
+    if (!voices.length) return;
+
+    const german = voices.filter(v => v.lang.toLowerCase().startsWith("de"));
+    const others = voices.filter(v => !v.lang.toLowerCase().startsWith("de"));
+    const ordered = german.concat(others);
+
+    voiceSelect.innerHTML = "";
+    const defaultOpt = document.createElement("option");
+    defaultOpt.value = "";
+    defaultOpt.textContent = "Standard (Deutsch)";
+    voiceSelect.appendChild(defaultOpt);
+
+    ordered.forEach((voice) => {
+      const opt = document.createElement("option");
+      opt.value = voiceKey(voice);
+      opt.textContent = `${voice.name} (${voice.lang})`;
+      voiceSelect.appendChild(opt);
+    });
+
+    const stillExists = ordered.some(v => voiceKey(v) === selectedVoiceKey);
+    voiceSelect.value = stillExists ? selectedVoiceKey : "";
+  }
+
+  function getSelectedVoice() {
+    if (!selectedVoiceKey || !("speechSynthesis" in window)) return null;
+    return window.speechSynthesis.getVoices().find(v => voiceKey(v) === selectedVoiceKey) || null;
+  }
+
+  voiceSelect.addEventListener("change", () => {
+    selectedVoiceKey = voiceSelect.value;
+    localStorage.setItem(VOICE_STORAGE_KEY, selectedVoiceKey);
+  });
+
+  voiceTestBtn.addEventListener("click", () => {
+    speak("So klingt diese Stimme. Zum Beispiel: Automarke.");
+  });
+
+  if ("speechSynthesis" in window) {
+    populateVoices();
+    window.speechSynthesis.onvoiceschanged = populateVoices;
+  }
+
   function speak(text) {
     return new Promise((resolve) => {
       if (!("speechSynthesis" in window)) { resolve(); return; }
       window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = "de-DE";
+      const voice = getSelectedVoice();
+      if (voice) {
+        utter.voice = voice;
+        utter.lang = voice.lang;
+      } else {
+        utter.lang = "de-DE";
+      }
       utter.rate = 0.95;
       utter.onend = resolve;
       utter.onerror = resolve;
