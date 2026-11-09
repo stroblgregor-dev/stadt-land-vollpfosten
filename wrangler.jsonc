@@ -1,0 +1,12 @@
+{
+  // Stadt Land Vollpfosten: rein statische PWA (alle Daten liegen lokal im Gerät), frei erreichbar.
+  "name": "stadt-land-vollpfosten",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "."
+  },
+  // keine öffentlichen *.workers.dev-Adressen – nur die eigene Domain
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{ "pattern": "slv.kalestro.app", "custom_domain": true }]
+}
