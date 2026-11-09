@@ -314,10 +314,53 @@
   stopBtn.addEventListener("click", () => stopRound());
   restartBtn.addEventListener("click", startGame);
 
+  /* ---------- Umzug von der alten Adresse (GitHub Pages) ---------- */
+
+  const OLD_HOST = "stroblgregor-dev.github.io";
+  const NEW_URL = "https://slv.kalestro.app/";
+  const migrateBanner = document.getElementById("migrateBanner");
+  const migrateBtn = document.getElementById("migrateBtn");
+
+  if (location.hostname === OLD_HOST) {
+    migrateBanner.classList.remove("hidden");
+    migrateBtn.addEventListener("click", () => {
+      const payload = { c: categories, v: selectedVoiceKey };
+      location.href = NEW_URL + "#import=" + encodeURIComponent(JSON.stringify(payload));
+    });
+  }
+
+  function importFromHash() {
+    const m = location.hash.match(/^#import=(.+)$/);
+    if (!m) return;
+    history.replaceState(null, "", location.pathname + location.search);
+    try {
+      const data = JSON.parse(decodeURIComponent(m[1]));
+      const list = Array.isArray(data.c) ? data.c : [];
+      const clean = [];
+      list.forEach((x) => {
+        if (typeof x !== "string") return;
+        const t = x.trim().slice(0, 60);
+        if (t && !clean.some(c => c.toLowerCase() === t.toLowerCase())) clean.push(t);
+      });
+      if (!clean.length || clean.length > 500) return;
+      if (!confirm(`${clean.length} Kategorien aus der alten App übernehmen? Deine aktuelle Liste wird dabei ersetzt.`)) return;
+      categories = clean;
+      persist();
+      if (typeof data.v === "string") {
+        selectedVoiceKey = data.v;
+        localStorage.setItem(VOICE_STORAGE_KEY, selectedVoiceKey);
+        populateVoices();
+      }
+      renderCategoryList();
+      showToast(`${clean.length} Kategorien übernommen`);
+    } catch (e) { /* ungültiger Link – ignorieren */ }
+  }
+
   /* ---------- init ---------- */
 
   renderCategoryList();
   setState("idle");
+  importFromHash();
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {

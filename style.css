@@ -154,6 +154,22 @@ main {
   padding: 8px;
 }
 
+.migrate-banner {
+  margin: 4px 20px 0;
+  padding: 14px 16px;
+  background: rgba(255, 209, 102, 0.14);
+  border: 1px solid var(--accent-2);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.migrate-banner p { margin: 0; }
+.migrate-banner.hidden { display: none; }
+
 .secondary-btn.small {
   padding: 10px 14px;
   font-size: 0.9rem;
